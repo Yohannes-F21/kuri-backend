@@ -1,0 +1,62 @@
+[
+  {
+    "courseTitle": "Introduction to Computer Science",
+    "courseCode": "CS101",
+    "creditHour": 3,
+    "teacher": "teacherObjectId1"
+  },
+  {
+    "courseTitle": "Linear Algebra",
+    "courseCode": "MATH202",
+    "creditHour": 4,
+    "teacher": "teacherObjectId2"
+  },
+  {
+    "courseTitle": "Electrical Circuits",
+    "courseCode": "EE301",
+    "creditHour": 3,
+    "teacher": "teacherObjectId3"
+  },
+  {
+    "courseTitle": "Mechanics of Materials",
+    "courseCode": "MECH401",
+    "creditHour": 4,
+    "teacher": "teacherObjectId4"
+  },
+  {
+    "courseTitle": "Organic Chemistry",
+    "courseCode": "CHEM201",
+    "creditHour": 3,
+    "teacher": "teacherObjectId5"
+  },
+  {
+    "courseTitle": "Data Structures and Algorithms",
+    "courseCode": "CS202",
+    "creditHour": 4,
+    "teacher": "teacherObjectId1"
+  },
+  {
+    "courseTitle": "Thermodynamics",
+    "courseCode": "MECH301",
+    "creditHour": 3,
+    "teacher": "teacherObjectId3"
+  },
+  {
+    "courseTitle": "Introduction to Physics",
+    "courseCode": "PHY101",
+    "creditHour": 3,
+    "teacher": "teacherObjectId6"
+  },
+  {
+    "courseTitle": "Digital Electronics",
+    "courseCode": "EE201",
+    "creditHour": 4,
+    "teacher": "teacherObjectId2"
+  },
+  {
+    "courseTitle": "Cell Biology",
+    "courseCode": "BIO301",
+    "creditHour": 3,
+    "teacher": "teacherObjectId5"
+  }
+]
