@@ -3,6 +3,7 @@ const { UserModel } = require("../../models/User.model");
 
 const { StatusCodes } = require("http-status-codes");
 const upload = require("../../middlewares/multer-config");
+const cloudinary = require("../../utils/cloudinary");
 
 const createBlog = async (req, res) => {
   upload.single("thumbnail")(req, res, async (err) => {
@@ -15,13 +16,17 @@ const createBlog = async (req, res) => {
     try {
       const { lang, isPublished, category } = req.body;
       const thumbnail = req.file
-        ? req.file.path
+        ? req.file.path || req.file.url
         : "https://placehold.co/600x400?text=Cover+Image";
+
+      const thumbnailPublicId = req.file ? req.file.filename : null;
+
       const blog = await Blog.create({
         lang,
         author: req.user._id,
         isPublished,
         thumbnail,
+        thumbnailPublicId,
         category,
       });
       res.status(StatusCodes.CREATED).json({ blog });
@@ -133,7 +138,7 @@ const getBlogById = async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id).populate(
       "author",
-      "name email"
+      "name email",
     );
     if (!blog) {
       return res
@@ -156,12 +161,22 @@ const updateBlog = async (req, res) => {
 
     try {
       const { lang, isPublished, category } = req.body;
-      const thumbnail = req.file ? req.file.path : null;
+      const existingBlog = await Blog.findById(req.params.id);
+      if (!existingBlog) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ message: "Blog not found" });
+      }
 
       const updateData = { lang, isPublished, category };
 
-      if (thumbnail) {
-        updateData.thumbnail = thumbnail;
+      if (req.file) {
+        if (existingBlog.thumbnailPublicId) {
+          await cloudinary.uploader.destroy(existingBlog.thumbnailPublicId);
+        }
+
+        updateData.thumbnail = req.file.path || req.file.url;
+        updateData.thumbnailPublicId = req.file.filename;
       }
 
       const blog = await Blog.findByIdAndUpdate(req.params.id, updateData, {
@@ -184,12 +199,18 @@ const updateBlog = async (req, res) => {
 
 const deleteBlog = async (req, res) => {
   try {
-    const blog = await Blog.findByIdAndDelete(req.params.id);
+    const blog = await Blog.findById(req.params.id);
     if (!blog) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Blog not found" });
     }
+
+    if (blog.thumbnailPublicId) {
+      await cloudinary.uploader.destroy(blog.thumbnailPublicId);
+    }
+
+    await Blog.findByIdAndDelete(req.params.id);
     res.status(StatusCodes.OK).json({ message: "Blog deleted successfully" });
   } catch (error) {
     res

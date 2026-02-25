@@ -37,6 +37,10 @@ const BlogSchema = mongoose.Schema({
     type: String,
     default: "https://via.placeholder.com/150",
   },
+  thumbnailPublicId: {
+    type: String,
+    default: null,
+  },
   isPublished: {
     type: Boolean,
     default: false,
