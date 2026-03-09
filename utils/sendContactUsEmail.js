@@ -6,12 +6,12 @@ const sendContactUsMail = async ({ name, email, message, subject }) => {
   let testAccount = await nodemailer.createTestAccount();
 
   const transporter = nodemailer.createTransport(
-    smtpTransport(nodemailerConfig)
+    smtpTransport(nodemailerConfig),
   );
 
   const mailOptions = {
     from: `${name} <${email}>`,
-    to: "johnrobitm@gmail.com",
+    to: "yohannesfantahun.m@gmail.com",
     subject,
     text: `You received a new message from ${name} (${email}):\n\n${message}`,
   };
