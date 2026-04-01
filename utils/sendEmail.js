@@ -40,11 +40,16 @@ const resolveIpv4WithPublicDns = async (hostname) => {
   return addresses && addresses.length ? addresses[0] : null;
 };
 
-const sendEmail = async ({ email, subject, html }) => {
+const sendEmail = async ({ email, to, subject, html, text, replyTo }) => {
   if (!nodemailerConfig?.auth?.user || !nodemailerConfig?.auth?.pass) {
     throw new Error(
       "Email is not configured. Set EMAIL_USER (or EMAIL) and EMAIL_PASS in your environment. For Gmail, EMAIL_PASS must be an App Password (not your normal password).",
     );
+  }
+
+  const recipient = to || email;
+  if (!recipient) {
+    throw new Error("Email recipient is required");
   }
 
   const originalHost = nodemailerConfig.host;
@@ -86,9 +91,11 @@ const sendEmail = async ({ email, subject, html }) => {
 
   const mailOptions = {
     from: process.env.EMAIL_FROM || process.env.EMAIL_USER || process.env.EMAIL,
-    to: email,
+    to: recipient,
     subject,
     html,
+    text,
+    replyTo,
   };
 
   try {
