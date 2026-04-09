@@ -2,6 +2,7 @@
   "origins": [
     "http://localhost:5173",
     "http://localhost:5174",
+    "https://kurimothers.com",
     "https://www.kurimothers.com",
     "https://admin.kurimothers.com",
     "http://localhost:8080"
