@@ -255,7 +255,19 @@ const verifyEmail = async (req, res) => {
   }
 
   const user = await UserModel.findOne({ email: normalizedEmail });
-  if (!user || user.verificationToken !== normalizedToken) {
+  if (!user) {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ message: "Verification Failed" });
+  }
+
+  if (user.isVerified) {
+    return res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: "Email already verified" });
+  }
+
+  if (user.verificationToken !== normalizedToken) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
       .json({ message: "Verification Failed" });
@@ -285,7 +297,19 @@ const verifyEmailFromLink = async (req, res) => {
     }
 
     const user = await UserModel.findOne({ email: normalizedEmail });
-    if (!user || user.verificationToken !== normalizedToken) {
+    if (!user) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .send(
+          `<h2>Verification Failed</h2><p>Invalid or expired verification link.</p><p><a href="${frontendOrigin}">Go back</a></p>`,
+        );
+    }
+
+    if (user.isVerified) {
+      return res.redirect(302, frontendLoginUrl);
+    }
+
+    if (user.verificationToken !== normalizedToken) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
         .send(

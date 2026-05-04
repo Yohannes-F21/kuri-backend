@@ -1,10 +1,6 @@
 const sendEmail = require("./sendEmail");
 
-const CONTACT_DESTINATION =
-  process.env.CONTACT_EMAIL_TO ||
-  process.env.EMAIL_TO ||
-  process.env.EMAIL_USER ||
-  process.env.EMAIL;
+const CONTACT_DESTINATION = process.env.EMAIL;
 
 const escapeHtml = (value) =>
   String(value || "")

@@ -40,14 +40,24 @@ const resolveIpv4WithPublicDns = async (hostname) => {
   return addresses && addresses.length ? addresses[0] : null;
 };
 
+const formatFromAddress = () => {
+  const emailAddress = String(process.env.EMAIL_FROM || "").trim();
+
+  if (!emailAddress) {
+    return "";
+  }
+
+  return emailAddress;
+};
+
 const sendEmail = async ({ email, to, subject, html, text, replyTo }) => {
   if (!nodemailerConfig?.auth?.user || !nodemailerConfig?.auth?.pass) {
     throw new Error(
-      "Email is not configured. Set EMAIL_USER (or EMAIL) and EMAIL_PASS in your environment. For Gmail, EMAIL_PASS must be an App Password (not your normal password).",
+      "Email is not configured. Set EMAIL_FROM and EMAIL_PASS in your environment. For Gmail, EMAIL_PASS must be an App Password (not your normal password).",
     );
   }
 
-  const recipient = to || email;
+  const recipient = to || email || String(process.env.EMAIL || "").trim();
   if (!recipient) {
     throw new Error("Email recipient is required");
   }
@@ -90,7 +100,7 @@ const sendEmail = async ({ email, to, subject, html, text, replyTo }) => {
   let transporter = createTransporter(initialConfig);
 
   const mailOptions = {
-    from: process.env.EMAIL_FROM || process.env.EMAIL_USER || process.env.EMAIL,
+    from: formatFromAddress(),
     to: recipient,
     subject,
     html,
@@ -123,7 +133,7 @@ const sendEmail = async ({ email, to, subject, html, text, replyTo }) => {
 
     if (error?.code === "EAUTH" || error?.responseCode === 535) {
       throw new Error(
-        "SMTP authentication failed (Gmail 535). If you are using Gmail, enable 2-Step Verification on the account and use a Google App Password as EMAIL_PASS. Also ensure EMAIL_USER matches the Gmail account that generated the App Password.",
+        "SMTP authentication failed (Gmail 535). If you are using Gmail, enable 2-Step Verification on the account and use a Google App Password as EMAIL_PASS. Also ensure EMAIL_FROM matches the Gmail account that generated the App Password.",
       );
     }
     throw error;
